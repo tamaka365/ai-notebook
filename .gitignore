@@ -1,0 +1,34 @@
+# 环境变量
+.env.local
+.env.*.local
+
+# 配置文件（包含用户数据的敏感配置）
+config.json
+
+# 笔记文件
+notes/
+
+# Next.js
+.next/
+out/
+
+# 依赖
+node_modules/
+
+# 调试
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
