@@ -2,6 +2,7 @@
 
 import bcrypt from "bcryptjs";
 import { sendEmail } from "@/lib/email/sender";
+import { clearSession } from "@/lib/auth/session";
 import {
   getConfig,
   getVerificationCode,
@@ -10,6 +11,7 @@ import {
 } from "@/lib/config/manager";
 import { sendResetCodeSchema, resetPasswordSchema } from "@/lib/validations/auth";
 import type { VerificationCode } from "@/types/config";
+import { revalidatePath } from "next/cache";
 
 /**
  * 发送重置密码验证码
@@ -126,4 +128,12 @@ export async function resetPassword(formData: FormData) {
   fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 2), "utf-8");
 
   return { success: true };
+}
+
+/**
+ * 退出登录
+ */
+export async function logout(): Promise<void> {
+  await clearSession();
+  revalidatePath("/", "layout");
 }

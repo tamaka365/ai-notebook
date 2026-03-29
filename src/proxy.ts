@@ -53,15 +53,6 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next({ request: { headers } });
   }
 
-  // 3. 页面路由：未登录重定向到 /login
-  if (pathname !== "/login" && !pathname.startsWith("/_next")) {
-    const token = request.cookies.get("ai_notebook_token")?.value;
-    const session = token ? await verifyToken(token) : null;
-    if (!session) {
-      return NextResponse.redirect(new URL("/login", request.url));
-    }
-  }
-
   return NextResponse.next();
 }
 
