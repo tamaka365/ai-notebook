@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { AppConfig, VerificationCode } from "@/types/config";
+import type { User } from "@/types/auth";
 
 const CONFIG_PATH = path.resolve(process.cwd(), "config.json");
 
@@ -65,6 +66,22 @@ export function removeVerificationCode(email: string): void {
 
   config.verificationCodes = codes.filter((c) => c.email !== email);
   writeConfig(config);
+}
+
+/**
+ * 根据用户名查找用户
+ */
+export function getUserByUsername(username: string): User | null {
+  const config = readConfig();
+  return config.users.find((u) => u.username === username) ?? null;
+}
+
+/**
+ * 根据 ID 查找用户
+ */
+export function getUserById(id: string): User | null {
+  const config = readConfig();
+  return config.users.find((u) => u.id === id) ?? null;
 }
 
 /**
