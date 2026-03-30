@@ -1,10 +1,10 @@
-import type { User } from "@/types/auth";
+import type { PublicUser } from "@/types/auth";
 
 /**
  * 检查用户是否有权限执行操作
  */
 export function hasPermission(
-  user: User,
+  user: PublicUser,
   path: string,
   operation: "read" | "write" | "delete"
 ): boolean {
@@ -29,7 +29,7 @@ export function hasPermission(
  * 权限不足时抛出错误
  */
 export function checkPermission(
-  user: User,
+  user: PublicUser,
   path: string,
   operation: "read" | "write" | "delete"
 ): void {
