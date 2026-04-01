@@ -108,6 +108,13 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
     }
   }, [editor]);
 
+  const toggleBlock = useCallback(
+    (type: string) => {
+      editor.tf.toggleBlock(type);
+    },
+    [editor]
+  );
+
   const insertBlock = useCallback(
     (type: string) => {
       editor.insertNodes({ type, children: [{ text: "" }] });
@@ -145,15 +152,15 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
-            <DropdownMenuItem onClick={() => insertBlock("h1")}>
+            <DropdownMenuItem onClick={() => toggleBlock("h1")}>
               <Heading1 className="h-4 w-4 mr-2" />
               标题 1
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => insertBlock("h2")}>
+            <DropdownMenuItem onClick={() => toggleBlock("h2")}>
               <Heading2 className="h-4 w-4 mr-2" />
               标题 2
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => insertBlock("h3")}>
+            <DropdownMenuItem onClick={() => toggleBlock("h3")}>
               <Heading3 className="h-4 w-4 mr-2" />
               标题 3
             </DropdownMenuItem>
@@ -182,20 +189,20 @@ export function EditorToolbar({ editor }: EditorToolbarProps) {
         <Separator orientation="vertical" className="mx-1 h-6" />
 
         {/* 列表 */}
-        <ToolBtn onClick={() => insertBlock("ul")} title="无序列表">
+        <ToolBtn onClick={() => toggleBlock("ul")} title="无序列表">
           <List className="h-4 w-4" />
         </ToolBtn>
-        <ToolBtn onClick={() => insertBlock("ol")} title="有序列表">
+        <ToolBtn onClick={() => toggleBlock("ol")} title="有序列表">
           <ListOrdered className="h-4 w-4" />
         </ToolBtn>
 
         <Separator orientation="vertical" className="mx-1 h-6" />
 
         {/* 区块 */}
-        <ToolBtn onClick={() => insertBlock("blockquote")} title="引用块">
+        <ToolBtn onClick={() => toggleBlock("blockquote")} title="引用块">
           <Quote className="h-4 w-4" />
         </ToolBtn>
-        <ToolBtn onClick={() => insertBlock("code_block")} title="代码块">
+        <ToolBtn onClick={() => toggleBlock("code_block")} title="代码块">
           <Code2 className="h-4 w-4" />
         </ToolBtn>
         <ToolBtn onClick={() => {}} title="链接">
