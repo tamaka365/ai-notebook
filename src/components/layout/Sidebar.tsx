@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { FileTree } from "./FileTree";
 import { useFileTree } from "@/hooks/useFileTree";
-import { useSession } from "@/components/providers/SessionProvider";
+import { UserMenu } from "./UserMenu";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -19,12 +19,17 @@ import {
   RefreshCw,
   BookOpen,
 } from "lucide-react";
+import {
+  Sidebar as ShadcnSidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+} from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import type { FileNode } from "@/types/file";
 
 export function Sidebar() {
-  const session = useSession();
   const router = useRouter();
   const pathname = usePathname();
   const { nodes, loading, error, fetchTree, createNode, deleteNode: deleteNodeApi, renameNode } = useFileTree();
@@ -196,8 +201,8 @@ export function Sidebar() {
   }, []);
 
   return (
-    <aside className="flex w-72 flex-col border-r">
-      <div className="flex items-center gap-1 border-b p-3">
+    <ShadcnSidebar>
+      <SidebarHeader className="flex flex-row items-center gap-1 px-3 pt-3 pb-0">
         <Button
           variant="outline"
           size="sm"
@@ -216,9 +221,9 @@ export function Sidebar() {
         >
           <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
         </Button>
-      </div>
+      </SidebarHeader>
 
-      <div className="flex-1 overflow-auto p-3 select-none">
+      <SidebarContent className="p-3 select-none">
         {loading && nodes.length === 0 ? (
           <div className="space-y-2">
             <Skeleton className="h-5 w-3/4" />
@@ -247,7 +252,7 @@ export function Sidebar() {
             onToggleExpand={handleToggleExpand}
           />
         )}
-      </div>
+      </SidebarContent>
 
       {/* 删除确认对话框 */}
       <ConfirmDialog
@@ -294,11 +299,9 @@ export function Sidebar() {
         </DialogContent>
       </Dialog>
 
-      <div className="border-t p-3 text-xs text-muted-foreground">
-        <span>{session?.user.username}</span>
-        <span className="mx-1">·</span>
-        <span>{session?.user.role === "admin" ? "管理员" : "用户"}</span>
-      </div>
+      <SidebarFooter className="p-2" suppressHydrationWarning>
+        <UserMenu />
+      </SidebarFooter>
 
       <Dialog open={createDialogOpen} onOpenChange={setCreateDialogOpen}>
         <DialogContent>
@@ -324,6 +327,6 @@ export function Sidebar() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </aside>
+    </ShadcnSidebar>
   );
 }

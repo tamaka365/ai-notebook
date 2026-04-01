@@ -81,8 +81,10 @@ export function FileTree({ nodes, selectedNoteId, expandedNodeIds, onSelect, onC
         return (
           <li key={node.id}>
             <div
-              className={`group flex items-center gap-1 rounded-sm px-2 py-1 text-sm cursor-pointer transition-colors ${
-                isSelected ? "bg-accent text-accent-foreground" : "hover:bg-accent/50"
+              className={`group/item flex items-center gap-1 rounded-md px-2 py-1.5 text-sm cursor-pointer transition-colors ${
+                isSelected
+                  ? "bg-sidebar-accent font-medium text-sidebar-accent-foreground"
+                  : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
               }`}
               style={{ paddingLeft: `${depth * 16 + 8}px` }}
               onClick={(e) => {
@@ -124,7 +126,7 @@ export function FileTree({ nodes, selectedNoteId, expandedNodeIds, onSelect, onC
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="h-6 w-6 opacity-0 group-hover/item:opacity-100 transition-opacity"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <MoreHorizontal className="h-3.5 w-3.5" />

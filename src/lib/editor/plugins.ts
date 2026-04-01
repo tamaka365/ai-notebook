@@ -5,6 +5,7 @@ import { BaseLinkPlugin } from "@platejs/link";
 import { BaseTablePlugin, BaseTableRowPlugin, BaseTableCellPlugin } from "@platejs/table";
 import { BaseFontColorPlugin, BaseFontBackgroundColorPlugin, BaseFontFamilyPlugin, BaseFontSizePlugin, BaseFontWeightPlugin, BaseLineHeightPlugin, BaseTextAlignPlugin, BaseTextIndentPlugin } from "@platejs/basic-styles";
 import { MarkdownPlugin } from "@platejs/markdown";
+import { FirstLineH1Plugin } from "./firstLineH1Plugin";
 
 /**
  * 获取所有编辑器插件
@@ -12,6 +13,7 @@ import { MarkdownPlugin } from "@platejs/markdown";
  */
 export function getEditorPlugins(): any[] {
   return [
+    FirstLineH1Plugin,
     MarkdownPlugin,
     BaseBasicBlocksPlugin,
     BaseBoldPlugin,
