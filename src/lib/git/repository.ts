@@ -1,5 +1,6 @@
 import { execFile } from "child_process";
 import { promisify } from "util";
+import path from "path";
 import { getNotesRoot } from "@/lib/fs/notes";
 
 const execFileAsync = promisify(execFile);
@@ -18,8 +19,11 @@ export class NotesGitRepository {
 
   async isGitRepo(): Promise<boolean> {
     try {
-      await this.execGit(["rev-parse", "--git-dir"]);
-      return true;
+      const { stdout } = await this.execGit(["rev-parse", "--git-dir"]);
+      const gitDir = stdout.trim();
+      if (!gitDir) return false;
+      const resolved = path.resolve(this.cwd, gitDir);
+      return resolved.startsWith(path.resolve(this.cwd));
     } catch {
       return false;
     }

@@ -205,7 +205,7 @@ export function NoteEditor({
             <FixedToolbarButtons />
           </FixedToolbar>
           <EditorContainer className="overflow-y-auto flex flex-col">
-            <div className="w-full max-w-175 self-center">
+            <div className="w-full max-w-175 self-center pb-8">
               <Editor
                 variant="default"
                 placeholder="开始写作..."

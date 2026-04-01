@@ -8,6 +8,8 @@ config.json
 # 笔记文件
 notes/
 
+ssh_key/
+
 # Next.js
 .next/
 out/
