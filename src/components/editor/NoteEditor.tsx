@@ -42,7 +42,9 @@ export function NoteEditor({
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const lastSavedContentRef = useRef<string>(initialContent);
+  const currentContentRef = useRef<string>(initialContent);
   const isInitializedRef = useRef(false);
+  const isSavingRef = useRef(false);
 
   // 创建编辑器
   const editor = usePlateEditor({
@@ -87,10 +89,12 @@ export function NoteEditor({
   // 序列化并保存
   const saveNow = useCallback(
     async (content: string) => {
+      if (content === lastSavedContentRef.current) return;
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
       abortControllerRef.current = new AbortController();
+      isSavingRef.current = true;
       setIsSaving(true);
       setError(null);
       try {
@@ -111,6 +115,7 @@ export function NoteEditor({
         if ((err as Error).name === 'AbortError') return;
         setError((err as Error).message || '保存失败');
       } finally {
+        isSavingRef.current = false;
         setIsSaving(false);
       }
     },
@@ -123,8 +128,10 @@ export function NoteEditor({
       if (!editor) return;
 
       // 序列化为 Markdown
-      const currentContent = serializeMd(editor);
-      if (currentContent === lastSavedContentRef.current) {
+      const content = serializeMd(editor);
+      currentContentRef.current = content;
+
+      if (content === lastSavedContentRef.current) {
         return; // 内容未变，忽略
       }
 
@@ -136,23 +143,59 @@ export function NoteEditor({
       }
 
       saveTimerRef.current = setTimeout(() => {
-        saveNow(currentContent);
+        saveNow(content);
       }, 2000);
     },
     [editor, saveNow, updateWordCount],
   );
 
-  // 清理
+  // 清理 - 组件卸载前保存未保存的内容
   useEffect(() => {
+    // 处理页面刷新/关闭前的保存
+    const handleBeforeUnload = () => {
+      const content = currentContentRef.current;
+      if (content !== lastSavedContentRef.current && !isSavingRef.current) {
+        const data = JSON.stringify({ content });
+        const url = `/api/notes/${encodeURIComponent(id)}`;
+
+        if (navigator.sendBeacon) {
+          const blob = new Blob([data], { type: 'application/json' });
+          navigator.sendBeacon(url, blob);
+        }
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
     return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
       }
+
+      // 如果有未保存的内容，立即保存（组件卸载场景）
+      const content = currentContentRef.current;
+      if (content !== lastSavedContentRef.current && !isSavingRef.current) {
+        const data = JSON.stringify({ content });
+        const url = `/api/notes/${encodeURIComponent(id)}`;
+
+        if (navigator.sendBeacon) {
+          const blob = new Blob([data], { type: 'application/json' });
+          navigator.sendBeacon(url, blob);
+        } else {
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', url, false);
+          xhr.setRequestHeader('Content-Type', 'application/json');
+          xhr.send(data);
+        }
+      }
+
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
       }
     };
-  }, []);
+  }, [id]);
 
   return (
     <div className="flex flex-col h-full">

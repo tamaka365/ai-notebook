@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import path from "path";
 import { nanoid } from "nanoid";
 import { getConfig } from "@/lib/config/manager";
+import { triggerGitSync } from "@/lib/git/sync";
 import type { FileNode, FileContent } from "@/types/file";
 import {
   loadMetadata,
@@ -90,6 +91,7 @@ export async function writeFile(
   await saveMetadata(meta);
 
   const nodePath = getLogicPath(meta, item.id);
+  triggerGitSync();
   return { ...item, path: nodePath };
 }
 
@@ -110,6 +112,7 @@ export async function createDir(parentId: string, name: string): Promise<FileNod
   await saveMetadata(meta);
 
   const nodePath = getLogicPath(meta, newItem.id);
+  triggerGitSync();
   return { ...newItem, path: nodePath };
 }
 
@@ -130,6 +133,7 @@ export async function deletePath(id: string): Promise<void> {
 
   removeItem(meta, id);
   await saveMetadata(meta);
+  triggerGitSync();
 }
 
 /** 根据 id 重命名 */
@@ -142,6 +146,7 @@ export async function renamePath(id: string, newName: string): Promise<FileNode>
   await saveMetadata(meta);
 
   const nodePath = getLogicPath(meta, item.id);
+  triggerGitSync();
   return { ...item, name: newName, path: nodePath };
 }
 
