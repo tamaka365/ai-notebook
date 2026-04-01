@@ -21,9 +21,14 @@ export async function getSession(): Promise<Session | null> {
 export async function setSession(user: PublicUser): Promise<void> {
   const cookieStore = await cookies();
   const token = await signToken(user);
+  // COOKIE_SECURE 环境变量可覆盖 secure 设置
+  // 设置为 "false" 可允许 HTTP 访问（如局域网 IP）
+  const secure = process.env.COOKIE_SECURE === "true" ||
+    (process.env.NODE_ENV === "production" && process.env.COOKIE_SECURE !== "false");
+
   cookieStore.set(TOKEN_COOKIE_NAME, token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
+    secure,
     sameSite: "lax",
     maxAge: COOKIE_MAX_AGE,
     path: "/",
