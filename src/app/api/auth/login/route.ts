@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getUserByUsername } from "@/lib/config/manager";
+import { getUserByEmail } from "@/lib/config/manager";
 import { verifyPassword } from "@/lib/auth/password";
 import { setSession } from "@/lib/auth/session";
 import type { ApiResponse, LoginRequest, LoginResponse } from "@/types/api";
@@ -9,23 +9,23 @@ export async function POST(request: NextRequest) {
     const body = (await request.json()) as LoginRequest;
 
     // 1. 验证必填字段
-    if (!body.username || !body.password) {
+    if (!body.email || !body.password) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: { code: "INVALID_INPUT", message: "用户名和密码不能为空" },
+          error: { code: "INVALID_INPUT", message: "邮箱和密码不能为空" },
         },
         { status: 400 }
       );
     }
 
     // 2. 查找用户
-    const user = getUserByUsername(body.username);
+    const user = getUserByEmail(body.email);
     if (!user) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: { code: "INVALID_CREDENTIALS", message: "用户名或密码错误" },
+          error: { code: "INVALID_CREDENTIALS", message: "邮箱或密码错误" },
         },
         { status: 401 }
       );
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<ApiResponse>(
         {
           success: false,
-          error: { code: "INVALID_CREDENTIALS", message: "用户名或密码错误" },
+          error: { code: "INVALID_CREDENTIALS", message: "邮箱或密码错误" },
         },
         { status: 401 }
       );

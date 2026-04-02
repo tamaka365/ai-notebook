@@ -77,6 +77,14 @@ export function getUserByUsername(username: string): User | null {
 }
 
 /**
+ * 根据邮箱查找用户
+ */
+export function getUserByEmail(email: string): User | null {
+  const config = readConfig();
+  return config.users.find((u) => u.email === email) ?? null;
+}
+
+/**
  * 根据 ID 查找用户
  */
 export function getUserById(id: string): User | null {

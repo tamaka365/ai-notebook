@@ -10,7 +10,7 @@ export interface ApiResponse<T = unknown> {
 
 // 登录
 export interface LoginRequest {
-  username: string;
+  email: string;
   password: string;
 }
 
