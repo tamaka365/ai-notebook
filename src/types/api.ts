@@ -56,3 +56,18 @@ export interface UpdateUserRequest {
   role: "admin" | "user";
   permissions: UserPermissions;
 }
+
+// 系统配置响应
+export interface SystemConfigResponse {
+  notesRootPath: string;
+  git?: {
+    enabled: boolean;
+    remoteUrl?: string;
+    branch?: string;
+  };
+}
+
+// 更新系统配置请求
+export interface UpdateSystemConfigRequest {
+  notesRootPath: string;
+}

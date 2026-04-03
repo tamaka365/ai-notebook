@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import type { AppConfig, VerificationCode } from "@/types/config";
+import type { AppConfig, VerificationCode, SystemConfig } from "@/types/config";
 import type { User } from "@/types/auth";
 
 const CONFIG_PATH = path.resolve(process.cwd(), "config.json");
@@ -219,4 +219,62 @@ export function updateUserPassword(id: string, passwordHash: string): void {
   config.users[userIndex]!.updatedAt = new Date().toISOString();
 
   writeConfig(config);
+}
+
+/**
+ * 获取系统配置
+ */
+export function getSystemConfig(): SystemConfig {
+  const config = readConfig();
+  return config.system;
+}
+
+/**
+ * 更新系统配置
+ * @param systemConfig 新的系统配置
+ */
+export function updateSystemConfig(
+  systemConfig: Partial<SystemConfig>
+): SystemConfig {
+  const config = readConfig();
+
+  config.system = {
+    ...config.system,
+    ...systemConfig,
+    updatedAt: new Date().toISOString(),
+  };
+
+  writeConfig(config);
+  return config.system;
+}
+
+/**
+ * 验证笔记根目录路径是否有效
+ * @param path 要验证的路径
+ * @returns 验证结果 { valid: boolean; error?: string }
+ */
+export function validateNotesRootPath(path: string): { valid: boolean; error?: string } {
+  try {
+    // 检查路径是否存在
+    if (!fs.existsSync(path)) {
+      return { valid: false, error: "路径不存在" };
+    }
+
+    // 检查是否为目录
+    const stats = fs.statSync(path);
+    if (!stats.isDirectory()) {
+      return { valid: false, error: "路径不是目录" };
+    }
+
+    // 检查是否有读写权限
+    try {
+      fs.accessSync(path, fs.constants.R_OK | fs.constants.W_OK);
+    } catch {
+      return { valid: false, error: "没有目录的读写权限" };
+    }
+
+    return { valid: true };
+  } catch (error) {
+    return { valid: false, error: `验证失败: ${(error as Error).message}` };
+  }
 }

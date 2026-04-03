@@ -20,6 +20,7 @@ export interface GitSyncConfig {
 export interface SystemConfig {
   notesRootPath: string;
   git?: GitSyncConfig;
+  updatedAt?: string;
 }
 
 export interface AppConfig {
