@@ -20,7 +20,7 @@ function findNode(root: FileNode, id: string): FileNode | null {
 }
 
 /** 递归查找父节点 */
-function findParent(root: FileNode, id: string): FileNode | null {
+export function findParent(root: FileNode, id: string): FileNode | null {
   if (root.children) {
     for (const child of root.children) {
       if (child.id === id) return root;

@@ -5,6 +5,8 @@ import { useRouter, usePathname } from "next/navigation";
 import { FileTree } from "./FileTree";
 import { useFileTree } from "@/hooks/useFileTree";
 import { UserMenu } from "./UserMenu";
+import { useSession } from "@/components/providers/SessionProvider";
+import { canCreateWorkspace } from "@/lib/auth/permissions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -32,7 +34,9 @@ import type { FileNode } from "@/types/file";
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
+  const session = useSession();
   const { nodes, loading, error, fetchTree, createNode, deleteNode: deleteNodeApi, renameNode } = useFileTree();
+  const canCreate = session?.user ? canCreateWorkspace(session.user) : false;
   const [createParentId, setCreateParentId] = useState<string | null>(null);
   const [expandedNodeIds, setExpandedNodeIds] = useState<Record<string, boolean>>({});
 
@@ -203,15 +207,17 @@ export function Sidebar() {
   return (
     <ShadcnSidebar>
       <SidebarHeader className="flex flex-row items-center gap-1 px-3 pt-3 pb-0">
-        <Button
-          variant="outline"
-          size="sm"
-          className="flex-1 gap-1"
-          onClick={() => openCreateDialog()}
-        >
-          <BookOpen className="h-4 w-4" />
-          新建知识库
-        </Button>
+        {canCreate && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="flex-1 gap-1"
+            onClick={() => openCreateDialog()}
+          >
+            <BookOpen className="h-4 w-4" />
+            新建知识库
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="icon"

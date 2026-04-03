@@ -103,3 +103,120 @@ export function cleanExpiredCodes(): void {
   config.verificationCodes = codes.filter((c) => c.expiresAt > now);
   writeConfig(config);
 }
+
+/**
+ * 获取所有用户列表
+ */
+export function getUsers(): User[] {
+  const config = readConfig();
+  return config.users;
+}
+
+/**
+ * 创建用户
+ */
+export function createUser(
+  userData: Omit<User, "id" | "createdAt" | "updatedAt" | "passwordHash" | "status"> & {
+    password: string;
+  }
+): User {
+  const config = readConfig();
+
+  // 检查用户名是否已存在
+  if (config.users.some((u) => u.username === userData.username)) {
+    throw new Error("用户名已存在");
+  }
+
+  // 检查邮箱是否已存在
+  if (config.users.some((u) => u.email === userData.email)) {
+    throw new Error("邮箱已被注册");
+  }
+
+  const now = new Date().toISOString();
+  const newUser: User = {
+    id: crypto.randomUUID(),
+    username: userData.username,
+    email: userData.email,
+    passwordHash: "", // 由调用方使用 bcrypt 加密后设置
+    role: userData.role,
+    status: "active",
+    permissions: userData.permissions,
+    createdAt: now,
+    updatedAt: now,
+  };
+
+  config.users.push(newUser);
+  writeConfig(config);
+
+  return newUser;
+}
+
+/**
+ * 更新用户信息
+ */
+export function updateUser(
+  id: string,
+  data: Partial<Pick<User, "email" | "role" | "status" | "permissions">>
+): User {
+  const config = readConfig();
+  const userIndex = config.users.findIndex((u) => u.id === id);
+
+  if (userIndex === -1) {
+    throw new Error("用户不存在");
+  }
+
+  const user = config.users[userIndex]!;
+
+  // 如果修改邮箱，检查是否与其他用户冲突
+  if (data.email && data.email !== user.email) {
+    if (config.users.some((u) => u.id !== id && u.email === data.email)) {
+      throw new Error("邮箱已被其他用户使用");
+    }
+  }
+
+  config.users[userIndex] = {
+    ...user,
+    ...data,
+    updatedAt: new Date().toISOString(),
+  };
+
+  writeConfig(config);
+
+  return config.users[userIndex]!;
+}
+
+/**
+ * 删除用户
+ */
+export function deleteUser(id: string): void {
+  const config = readConfig();
+
+  // 防止删除最后一个管理员
+  const user = config.users.find((u) => u.id === id);
+  if (user?.role === "admin") {
+    const adminCount = config.users.filter((u) => u.role === "admin").length;
+    if (adminCount <= 1) {
+      throw new Error("不能删除最后一个管理员");
+    }
+  }
+
+  config.users = config.users.filter((u) => u.id !== id);
+  writeConfig(config);
+}
+
+/**
+ * 更新用户密码
+ */
+export function updateUserPassword(id: string, passwordHash: string): void {
+  const config = readConfig();
+  const userIndex = config.users.findIndex((u) => u.id === id);
+
+  if (userIndex === -1) {
+    throw new Error("用户不存在");
+  }
+
+  config.users[userIndex]!.passwordHash = passwordHash;
+  config.users[userIndex]!.updatedAt = new Date().toISOString();
+
+  writeConfig(config);
+}

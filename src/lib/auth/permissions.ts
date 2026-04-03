@@ -2,10 +2,11 @@ import type { PublicUser } from "@/types/auth";
 
 /**
  * 检查用户是否有权限执行操作
+ * @param workspaceId 知识库ID
  */
 export function hasPermission(
   user: PublicUser,
-  path: string,
+  workspaceId: string,
   operation: "read" | "write" | "delete"
 ): boolean {
   // 禁用用户拒绝
@@ -14,15 +15,32 @@ export function hasPermission(
   // 管理员通过
   if (user.role === "admin") return true;
 
-  // 检查操作权限
-  if (!user.permissions.operations.includes(operation)) {
-    return false;
+  // 查找知识库权限
+  const workspacePerm = user.permissions.workspaces.find(
+    (w) => w.id === workspaceId
+  );
+
+  if (!workspacePerm) return false;
+
+  if (operation === "read") {
+    return workspacePerm.canRead;
   }
 
-  // 检查目录权限
-  if (user.permissions.directories.includes("*")) return true;
+  // write 和 delete 都需要 write 权限
+  if (operation === "write" || operation === "delete") {
+    return workspacePerm.canWrite;
+  }
 
-  return user.permissions.directories.some((dir) => path.startsWith(dir));
+  return false;
+}
+
+/**
+ * 检查用户是否可以创建知识库
+ */
+export function canCreateWorkspace(user: PublicUser): boolean {
+  if (user.status === "disabled") return false;
+  if (user.role === "admin") return true;
+  return user.permissions.canCreateWorkspace;
 }
 
 /**
@@ -30,10 +48,10 @@ export function hasPermission(
  */
 export function checkPermission(
   user: PublicUser,
-  path: string,
+  workspaceId: string,
   operation: "read" | "write" | "delete"
 ): void {
-  if (!hasPermission(user, path, operation)) {
+  if (!hasPermission(user, workspaceId, operation)) {
     throw new Error("权限不足");
   }
 }

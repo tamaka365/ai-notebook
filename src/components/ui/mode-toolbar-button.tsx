@@ -20,13 +20,20 @@ import {
   DropdownMenuRadioItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useSystemReadOnly } from '@/components/editor/EditorReadOnlyContext';
 
 import { ToolbarButton } from './toolbar';
 
 export function ModeToolbarButton(props: DropdownMenuProps) {
   const editor = useEditorRef();
   const readOnly = useEditorReadOnly();
+  const systemReadOnly = useSystemReadOnly();
   const [open, setOpen] = React.useState(false);
+
+  // 系统层面只读（无编辑权限）时不显示模式切换按钮
+  if (systemReadOnly) {
+    return null;
+  }
 
   const isSuggesting = usePluginOption(SuggestionPlugin, 'isSuggesting');
 

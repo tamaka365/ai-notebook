@@ -1,3 +1,15 @@
+export interface WorkspacePermission {
+  id: string;
+  name: string;
+  canRead: boolean;
+  canWrite: boolean;
+}
+
+export interface UserPermissions {
+  canCreateWorkspace: boolean;
+  workspaces: WorkspacePermission[];
+}
+
 export interface User {
   id: string;
   username: string;
@@ -5,10 +17,7 @@ export interface User {
   passwordHash: string;
   role: "admin" | "user";
   status: "active" | "disabled";
-  permissions: {
-    directories: string[];
-    operations: ("read" | "write" | "delete" | "admin")[];
-  };
+  permissions: UserPermissions;
   createdAt: string;
   updatedAt: string;
 }
@@ -19,10 +28,7 @@ export interface PublicUser {
   email: string;
   role: "admin" | "user";
   status: "active" | "disabled";
-  permissions: {
-    directories: string[];
-    operations: ("read" | "write" | "delete" | "admin")[];
-  };
+  permissions: UserPermissions;
   createdAt: string;
   updatedAt: string;
 }

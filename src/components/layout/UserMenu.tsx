@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { Settings } from "lucide-react";
 import { logout } from "@/app/actions/auth";
 import { useSession } from "@/components/providers/SessionProvider";
 import { Button } from "@/components/ui/button";
@@ -42,6 +43,12 @@ export function UserMenu() {
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="start" className="w-48">
         <DropdownMenuItem disabled>个人设置</DropdownMenuItem>
+        {session?.user.role === "admin" && (
+          <DropdownMenuItem onClick={() => router.push("/settings")}>
+            <Settings className="mr-2 h-4 w-4" />
+            系统设置
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={handleLogout} className="text-destructive">
           退出登录

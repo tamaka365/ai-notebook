@@ -9,6 +9,7 @@ import { deserializeMd, serializeMd } from '@platejs/markdown';
 import type { Value } from 'platejs';
 import { FixedToolbar } from '@/components/ui/fixed-toolbar';
 import { FixedToolbarButtons } from '@/components/ui/fixed-toolbar-buttons';
+import { EditorReadOnlyContext } from './EditorReadOnlyContext';
 
 interface NoteEditorProps {
   id: string;
@@ -200,19 +201,21 @@ export function NoteEditor({
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 overflow-hidden">
-        <Plate editor={editor} onChange={handleChange} readOnly={readOnly}>
-          <FixedToolbar>
-            <FixedToolbarButtons />
-          </FixedToolbar>
-          <EditorContainer className="overflow-y-auto flex flex-col">
-            <div className="w-full max-w-175 self-center pb-8">
-              <Editor
-                variant="default"
-                placeholder="开始写作..."
-              />
-            </div>
-          </EditorContainer>
-        </Plate>
+        <EditorReadOnlyContext.Provider value={readOnly}>
+          <Plate editor={editor} onChange={handleChange} readOnly={readOnly}>
+            <FixedToolbar>
+              <FixedToolbarButtons />
+            </FixedToolbar>
+            <EditorContainer className="overflow-y-auto flex flex-col">
+              <div className="w-full max-w-175 self-center pb-8">
+                <Editor
+                  variant="default"
+                  placeholder="开始写作..."
+                />
+              </div>
+            </EditorContainer>
+          </Plate>
+        </EditorReadOnlyContext.Provider>
       </div>
       <div className="px-4 py-2 flex items-center justify-between text-xs text-muted-foreground border-t">
         <div className="flex items-center gap-4">
