@@ -5,8 +5,8 @@
 # 配置文件（包含用户数据的敏感配置）
 config.json
 
-# 笔记文件
-notes/
+# 笔记文件（仅根目录 notes 目录）
+/notes/
 
 ssh_key/
 
