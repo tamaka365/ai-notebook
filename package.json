@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "start:local": "COOKIE_SECURE=false next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "create-default-user": "tsx scripts/create-default-user.ts"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^3.0.84",
@@ -118,6 +119,7 @@
     "eslint-config-next": "16.2.1",
     "tailwind-scrollbar-hide": "^4.0.0",
     "tailwindcss": "^4",
+    "tsx": "^4.21.0",
     "typescript": "^5"
   }
 }
