@@ -6,8 +6,24 @@ import type { User } from "@/types/auth";
 const CONFIG_PATH = path.resolve(process.cwd(), "config.json");
 
 function readConfig(): AppConfig {
-  const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
-  return JSON.parse(raw) as AppConfig;
+  try {
+    const raw = fs.readFileSync(CONFIG_PATH, "utf-8");
+    return JSON.parse(raw) as AppConfig;
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") {
+      // 文件不存在时创建默认配置
+      const defaultConfig: AppConfig = {
+        system: {
+          notesRootPath: path.join(process.cwd(), "notes"),
+        },
+        users: [],
+        verificationCodes: [],
+      };
+      fs.writeFileSync(CONFIG_PATH, JSON.stringify(defaultConfig, null, 2), "utf-8");
+      return defaultConfig;
+    }
+    throw error;
+  }
 }
 
 function writeConfig(config: AppConfig): void {
