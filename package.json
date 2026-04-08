@@ -10,6 +10,7 @@
     "start:local": "pnpm --filter ai-notebook start:local",
     "lint": "pnpm --filter ai-notebook lint",
     "create-default-user": "pnpm --filter ai-notebook create-default-user",
+    "clone-submodule": "git submodule update --init",
     "typecheck": "pnpm --filter ai-notebook typecheck"
   },
   "devDependencies": {
