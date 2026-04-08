@@ -1,0 +1,3 @@
+[submodule "packages/plate-markdown-editor/plate-playground-template"]
+	path = packages/plate-markdown-editor/plate-playground-template
+	url = https://github.com/udecode/plate-playground-template.git
