@@ -4,15 +4,19 @@
 
 # 配置文件（包含用户数据的敏感配置）
 config.json
+packages/app/config.json
 
 # 笔记文件（仅根目录 notes 目录）
 /notes/
+packages/app/notes/
 
 ssh_key/
 
 # Next.js
 .next/
+packages/app/.next/
 out/
+packages/app/out/
 
 # 依赖
 node_modules/
@@ -37,3 +41,6 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+# packages/markdown-editor/plate-editor 是克隆的 git 仓库
+packages/markdown-editor/plate-editor/
